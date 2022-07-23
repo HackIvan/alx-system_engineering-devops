@@ -1,27 +1,13 @@
-
-
 #!/usr/bin/env bash
-# Creates the file /var/run/myscript.pid containing its PID
-# Displays To infinity and beyond indefinitely
-# Displays I hate the kill command when receiving a SIGTERM signal
-# Displays Y U no love me?! when receiving a SIGINT signal
-# Deletes the file /var/run/myscript.pid and terminates itself
-# when receiving a SIGQUIT or SIGTERM signal
-
+# Create a .pid file on /var/run and this process can be killed (Have special interactions)
+trap "echo \"Y U no love me?!\"; exit" SIGINT
+trap "sudo rm /var/run/myscript.pid; exit" SIGQUIT
+trap "echo \"I hate the kill command\"; sudo rm /var/run/myscript.pid; exit" SIGTERM
 
 echo "$$" > /var/run/myscript.pid
-
-termfunc() {
-	rm /var/run/myscript.pid
-	exit
-}
-
 
 while true
 do
 	echo "To infinity and beyond"
 	sleep 2
-	trap 'echo "Y U no love me?!"' SIGINT
-	trap 'echo "I hate the kill command" && termfunc' SIGTERM
-	trap 'termfunc' SIGQUIT
 done
